@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "TMCS-web", ".", "{950704D1-8C80-42B8-8436-8DFDEFF4CF3D}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_13234"
+		Debug.AspNetCompiler.PhysicalPath = "..\TMCS-web\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_13234\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_13234"
+		Release.AspNetCompiler.PhysicalPath = "..\TMCS-web\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_13234\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "13234"
+		SlnRelativePath = "..\TMCS-web\"
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{950704D1-8C80-42B8-8436-8DFDEFF4CF3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{950704D1-8C80-42B8-8436-8DFDEFF4CF3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
