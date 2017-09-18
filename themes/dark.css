@@ -1,0 +1,29 @@
+﻿body{
+    background: #444444;
+}
+#login-title{
+    color: rgba(255,255,255,0.6);
+}
+#login input{
+   background: rgba(255,255,255,0.4) 
+}
+#buttonLogin{
+    
+}
+#top{
+    background: #222222;
+    color: white;
+}
+#side{
+    background: #333333;
+    color: rgba(255,255,255,0.7);
+}
+#footer{
+    background: #222222;
+}
+#input{
+    background: #666666;
+}
+#inputArea .icon{
+    color: #555555;
+}

@@ -1,0 +1,409 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title></title>
+        <meta name="viewport" content="width=device-width,initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no,target-densitydpi=device-dpi" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="browsermode" content="application" />
+        <meta name="full-screen" content="true" />
+        <script src="lib/jQuery/jquery.min.js"></script>
+        <script src="TMCS.js"></script>
+        <script src="lib/HTMLTemplate/HTMLTemplate.js"></script>
+        <script src="lib/HTMLTemplate/ObserveList.js"></script>
+        <script src="lib/jsencrypt/jsencrypt.min.js"></script>
+        <script src="lib/crypto-js/crypto-js.js"></script>
+        <link rel="stylesheet" type="text/css" href="style.css"/>
+        <style>
+
+        </style>
+        <!--<link rel="stylesheet" type="text/css" href="themes/dark.css"/>-->
+    </head>
+    <body oncontextmenu="return false;">
+        <div id="login">
+            <div id="login-title" onselectstart="return false">Login</div>
+            <div id="login-input">
+                <input type="text" id="uid" placeholder="Username" />
+                <input type="password" id="pwd" placeholder="PrvKey/Password" />
+                <textarea id="prvKey" placeholder="Private key"></textarea>
+                <div id="buttons">
+                    <a id="buttonLogin" class="button">Sign in</a>
+                    <a id="buttonRegister" class="button">Sign up</a>
+                </div>
+            </div>
+            <p id="error-output">Unknown error.</p>
+            <!--<i id="buttonLogin" class="icon" onselectstart="return false">arrow_forward</i>-->
+        </div>
+        <div id="register">
+            
+        </div>
+        <div id="main" style="display: none;">
+            <div id="side" onselectstart="return false;">
+                <div>
+                    <div class="item" style="display:none;">
+                        <i id="buttonMenu" class="icon" onclick="$('#side').removeClass('slideIn');$('#side').addClass('slideOut');">menu</i>
+                    </div>
+                    <div id="myself" class="item">
+                        <img id="avatar" src="http://img.sardinefish.com/NDc2NTU2"/>
+                        <div id="info">
+                            <div id="name">My Name</div>
+                            <div id="uid">my_uid</div>
+                            <div id="status" class="online"></div>
+                        </div>
+                    </div>
+                    <div id="contact"></div>
+                    <div id="contacts">
+                        <template id="contactTemplate">
+                            <div class="item contact {chatting}" onclick="contactClick('{uid}')">
+                                <div class="avatar">
+                                    <img src="{avatar}" />
+                                    <div class="msgCount {msgStatus}">{unread}</div>
+                                </div>
+                                <div class="info">
+                                    <div class="name">{name}</div>
+                                    <div class= "status {status}"></div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+            <div id="center">
+                <div id="top" onselectstart="return false;">
+                    <i id="buttonMenu" class="icon" onclick="$('#side').removeClass('slideOut');$('#side').addClass('slideIn');">menu</i>
+                    <div id="title">Title</div>
+                </div>
+                <div id="chat">
+                    <template id="chatTemplate">
+                        <div class="{sender}">
+                            <img class="avatar" src="{avatar}" />
+                            <div class="msgBox">
+                                <div class="arrow"></div>
+                                <div class="msg">{data}</div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+                <div id="footer">
+                    <div id="msgInput">
+                        <div id="inputBG">
+                            <div id="input" class="textbox" contenteditable="true">Input</div>
+                            <i id="buttonEmoji" class="icon" onselectstart="return false;">insert_emoticon</i>
+                            <i id="buttonImg" class="icon" onselectstart="return false;">image</i>
+                            <i id="buttonImg" class="icon" onselectstart="return false;">add</i>
+                        </div>
+                        <i id="buttonSend" class=icon onselectstart="return false">send</i>
+                    </div>
+                </div>
+                <div id="logoBackground">
+                    <div id="logo">
+                        <div>TMCS</div>
+                        <div>LOGO</div>
+                    </div>
+                    <div style="color: rgba(255, 255, 255, 0.4); font-size: 2cm; margin-left: 1cm;">TMCS</div>
+                </div>
+            </div>
+        </div>
+        <script>
+
+            try
+            {
+                HTMLTemplate.Init();
+                var tmcsClient = new TMCS("tmcs.dwscdv3.com:443", true);
+                var contactsList = new ObserveList();
+                window.onload = initTMCS;
+                $("#buttonMenu").click(function (e)
+                {
+
+                });
+
+                $("#buttonLogin").click(login);
+                $("#login-input #uid").get(0).onblur = function (e)
+                {
+                    preLogin();
+                }
+                //$("#login-input #uid").focus(function () { $("#login #error-output").text(""); });
+                //$("#login-input #pwd").focus(function () { $("#login #error-output").text(""); });
+
+                $("#login-input #uid").get(0).onkeypress = loginInputCommit;
+                $("#login-input #pwd").get(0).onkeypress = loginInputCommit;
+
+
+                $("#msgInput #input").get(0).onkeypress = function (e)
+                {
+                    if (e.key == "Enter")
+                        sendMsg();
+                }
+                $("#buttonSend").click(function (e)
+                {
+                    sendMsg();
+                });
+                function loginInputCommit(e)
+                {
+                    if(e.key=="Enter")
+                    {
+                        login();
+                    }
+                }
+                function contactClick(uid)
+                {
+                    initChat(uid);
+                }
+                function initChat(uid)
+                {
+                    if (chatting)
+                    {
+                        var idx = contactsList.indexOf(chatting);
+                        chatting.chatting = "noChatting";
+                        contactsList.removeAt(idx);
+                        contactsList.insert(chatting, idx);
+                    }
+
+                    chatting = contactsList[uid];
+                    chatting.msgStatus = "noMsg";
+                    chatting.unread = 0;
+                    chatting.chatting = "chatting";
+                    $("#top #title").text(chatting.name);
+                    var chatTemplate = $("#chatTemplate").get(0);
+                    chatTemplate.dataSource = chatting.msg;
+                    var idx = contactsList.indexOf(chatting);
+                    contactsList.removeAt(idx);
+                    contactsList.insert(chatting, idx);
+                    $("#chat").css("display", "block");
+                    $("#top").css("display", "block");
+                    $("#footer").css("display", "block");
+
+                }
+                function sendMsg()
+                {
+
+                    if (!chatting && !chatting.uid) {
+                        return;
+                    }
+                    var text = $("#msgInput #input").text();
+                    if (text == "")
+                        return;
+                    tmcsClient.sendMessage(chatting.uid, TMCS.MessageType.Message, text);
+                    chatting.msg.add({
+                        sender: "msgSelf",
+                        avatar: tmcsClient.user.profile.avatar,
+                        data: text
+                    });
+                    $("#msgInput #input").text("");
+                    contactsList.remove(chatting);
+                    contactsList.insert(chatting, 0);
+                }
+                function preLogin()
+                {
+                    var uid = $("#uid").val();
+                    if (uid == "")
+                        return;
+                    tmcsClient.getLoginMethod(uid, function (result)
+                    {
+                        if (result.code != 0) {
+                            $("#login #error-output").text(result.data);
+                            return;
+                        }
+                        else {
+                            if (result.data.authType == TMCS.User.AuthType.Password) {
+                                $("#login #error-output").text('Please input "password" to login successfully.');
+                                $("#login #pwd").css("display", "block");
+                                $("#login #prvKey").css("display", "none");
+                                $("#login #pwd").get(0).focus();
+                            }
+                            else if (result.data.authType == TMCS.User.AuthType.PrivateKey) {
+                                $("#login #prvKey").css("display", "block");
+                                $("#login #pwd").css("display", "none");
+                                $("#login #error-output").html('Please input<br>\
+<br>\
+-----BEGIN RSA PRIVATE KEY-----<br>\
+MIICWwIBAAKBgQCOE0MUSc/NWyHdX+VL27GSuZJofXMf9KKapokQhBIW0+UMMabi<br>\
+m6TwKcmCZGiHonibvBKYKGluxdzhC39A6hndqAlYG351ockJ6VrQd/JECV1vcFkd<br>\
+lnHVInBUKh/iQ1T8yPhZ4bSxFI9f+6Stlg2UCratwWm4Uhm43ulr13825wIDAQAB<br>\
+AoGAIG7zREFpZ9bjDzdiEAQyMG2ep63jxyrAqA9WgOe1fXKX+kWndFnVuGHBt7uW<br>\
+RUhowhyYHhYzo28V8mX+geIvTxph4NFVVBI+BVqu0bOW2FRGhAdGhx2uq2Qk5BQN<br>\
+eLSV/va0fWCXxCAD5eIKOQ7o7aZQBqncbf3MEYEc/VNkEskCQQDuApprLJi2gYqY<br>\
+XGKf6cHYFRv9PLedPzR79ongGTyLJW4asYgSpb9etlAx6MkVACvATbdCzlbZa1SK<br>\
+EIwC0LzLAkEAmNBbuUiU8JUI7erUib2HZGnOq7AhHVK1rt9bs2MWAHxKniIQOpl7<br>\
+Hd3AepfSErhJc8Xx/wqsmkT3BbMaPeQm1QJAPHE2y87IfViKXMThWuDfFEPQFtBL<br>\
+hMhfSLfELb/a6y83NdotxyaGYcQEu5f1MLsZYT2bM4D49z/VeTZYiAKAXwJASIHU<br>\
+g72kreKJMhpSbmi3bTWnEl+n1rn/6tGgOSWysthGr3GKMcPRXwJw6bpPuwImGAC8<br>\
+Kj9uVmSSsOmicetnYQJAYtfo5ivoC3yySs5P+iOmlYSyzya/QBRvLNAFKeccY1rm<br>\
+Cylj7GwF/uieA6xJbb4lZHMz0SHjxQkk1tt9ikT+fg==<br>\
+-----END RSA PRIVATE KEY-----<br>\
+<br>\
+ to login successfully.\
+                                    ');
+                            }
+                            $("#login-input #pwd").get(0).placeholder = result.data.authType;
+                            $("#login #prvKey").get(0).focus();
+                        }
+                    });
+                }
+                var contacts = [];
+                var chatting = null;
+
+                function initTMCS()
+                {
+                    tmcsClient = new TMCS("tmcs.dwscdv3.com:443", true);
+                    tmcsClient.handshake(function (result)
+                    {
+                        if(result.code==0)
+                        {
+                            $("#login #error-output").text("Handshake succeed.");
+                        }
+                        else
+                        {
+                            $("#login #error-output").text(result.data);
+                        }
+                    });
+                }
+                function login()
+                {
+                    $("#login #error-output").text("");
+                    var uid = $("#login #uid").val();
+                    var key = "";
+                    if (!tmcsClient.user || !tmcsClient.user.authType)
+                    {
+                        preLogin();
+                        return;
+                    }
+                    if (tmcsClient.user.authType == TMCS.User.AuthType.Password)
+                        key = $("#login #pwd").val();
+                    else if (tmcsClient.user.authType == TMCS.User.AuthType.PrivateKey)
+                        key = $("#login #prvKey").val();
+
+                    if (key == "")
+                        $("#login #error-output").text("Please input your " + tmcsClient.user.authType.toLowerCase());
+
+                    tmcsClient.login(uid, key, function (result)
+                    {
+                        if (result.code == 0) {
+                            initUser();
+                            initContacts(function ()
+                            {
+                                initWS();
+                            });
+                        }
+                        else {
+                            $("#login #error-output").text(result.data);
+                        }
+                    });
+                    return;
+                    login(uid, pwd, function (succeed, msg)
+                    {
+                        if (!succeed) {
+                            alert(msg);
+                            return;
+                        }
+
+                    });
+                }
+                function initUser(callback)
+                {
+                    tmcsClient.user.getProfile(function (result)
+                    {
+                        if (result.code == 0)
+                        {
+                            $("#myself #name").text(result.data.uid);
+                            if (result.data.nickName != "")
+                                $("#myself #name").text(result.data.nickName);
+                            $("#myself #uid").text(result.data.uid);
+                            $("#myself #status").removeClass("online");
+                            $("#myself #status").removeClass("offline");
+                            $("#myself #status").addClass(result.data.status.toLowerCase());
+                            $("#myself #avatar").attr("src", result.data.avatar);
+                            if (callback)
+                                callback();
+                        }
+                    });
+                    return;
+                    startRecv(function (msg)
+                    {
+                        contacts[msg.sender].msg.add(msg);
+                    });
+                }
+                function initContacts(callback)
+                {
+                    tmcsClient.getContacts(function (result)
+                    {
+                        if (result.code == 0) {
+                            var container = $("#contactTemplate").get(0);
+                            contactsList = new ObserveList();
+                            for (var i = 0; i < result.data.length; i++) {
+                                var data = result.data[i];
+                                var contact = {
+                                    name: data.profile.uid,
+                                    uid: data.profile.uid,
+                                    avatar: data.profile.avatar,
+                                    status: data.profile.status.toLowerCase(),
+                                    unread: 0,
+                                    msgStatus: "noMsg",
+                                    msg: new ObserveList(),
+                                    chatting: "noChatting"
+                                };
+                                if (data.profile.nickName != "")
+                                    contact.name = data.profile.nickName;
+                                if (data.note != "")
+                                    contact.name = data.note;
+                                contactsList.add(contact);
+                                contactsList[contact.uid] = contact;
+                            }
+                            container.dataSource = contactsList;
+                            if (callback)
+                                callback();
+                        }
+
+                    });
+                }
+                function initWS(callback)
+                {
+                    tmcsClient.initWebSocket(function (result)
+                    {
+                        if (result.code == 0) {
+                            $("#login #pwd").val("");
+                            $("#login #prvKey").val("");
+                            $("#main").css("display", "block");
+                            $("#login").animate({ opacity: 0 }, 500, function ()
+                            {
+                                $("#login").css("display", "none");
+                            });
+                            tmcsClient.onMessage.add(onMessage);
+                            if (callback)
+                                callback;
+                        }
+                        else {
+                            $("#login #error-output").text(result.data);
+                        }
+                    });
+                }
+                function onMessage(msg)
+                {
+                    var x = msg;
+                    for (var i = 0; i < contactsList.length; i++)
+                    {
+                        if (contactsList[i].uid == msg.senderId)
+                        {
+                            var contact = contactsList[i];
+                            contact.unread++;
+                            if (contact.unread >= 1)
+                                contact.msgStatus = "onMsg";
+                            contact.msg.add({
+                                sender: "msgOpp",
+                                avatar: contactsList[i].avatar,
+                                data: msg.data.data
+                            });
+                            if (contact.chatting == "chatting")
+                                contact.msgStatus = "noMsg";
+                            contactsList.removeAt(i);
+                            contactsList.insert(contact, 0);
+                        }
+                    }
+                }
+            }
+            catch (ex)
+            {
+                alert("global:" + ex.message);
+            }
+        </script>
+    </body>
+</html>
