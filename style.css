@@ -273,6 +273,7 @@ input{
 .msgSelf{
     position: relative;
     padding: 0.8em;
+    text-align: right;
 }
 .msgSelf .avatar {
     width: 1cm;
@@ -280,14 +281,14 @@ input{
     border-radius: 50%;
     display: inline-block;
     vertical-align: top;
-    position: absolute;
+    position: relative;
     right: 0.8em;
 }
 .msgSelf .msgBox {
     position: absolute;
     right: 1cm;
     display: inline-block;
-    margin-right: 1.6em;
+    margin-right: 2rem;
     max-width: calc(100% - 1.5cm);
 }
 
@@ -510,6 +511,7 @@ input{
     height: calc(100% - 4cm);
     padding-top: 2cm;
     display: none;
+    overflow: auto;
 }
 
 #top {
@@ -875,6 +877,7 @@ input {
 .msgSelf {
     position: relative;
     padding: 0.8em;
+    text-align: right;
 }
 
     .msgSelf .avatar {
@@ -883,7 +886,7 @@ input {
         border-radius: 50%;
         display: inline-block;
         vertical-align: top;
-        position: absolute;
+        position: relative;
         right: 0.8em;
     }
 
@@ -891,7 +894,7 @@ input {
         position: absolute;
         right: 1cm;
         display: inline-block;
-        margin-right: 1.6em;
+        margin-right: 2rem;
         max-width: calc(100% - 1.5cm);
     }
     .msgSelf .arrow {
@@ -1090,6 +1093,7 @@ input {
     height: calc(100% - 4cm);
     padding-top: 2cm;
     display: none;
+    overflow: auto;
 }
 #top {
 	/* [disabled]display: none; */

@@ -80,7 +80,7 @@
                 </div>
                 <div id="chat">
                     <template id="chatTemplate">
-                        <div class="{sender}">
+                        <div class="{sender} .msg">
                             <img class="avatar" src="{avatar}" />
                             <div class="msgBox">
                                 <div class="arrow"></div>
@@ -132,7 +132,10 @@
                 $("#msgInput #input").get(0).onkeypress = function (e)
                 {
                     if (e.key == "Enter")
+                    {
                         sendMsg();
+                        e.cancelable = true;
+                    }
                 }
                 $("#buttonSend").click(function (e)
                 {
@@ -198,6 +201,7 @@
                     $("#msgInput #input").text("");
                     contactsList.remove(chatting);
                     contactsList.insert(chatting, 0);
+                    $(".msg").get($(".msg").length-1).scrollIntoView(false);
                 }
                 function preLogin()
                 {
@@ -406,7 +410,12 @@ Cylj7GwF/uieA6xJbb4lZHMz0SHjxQkk1tt9ikT+fg==<br>\
                             }
                             contactsList.removeAt(i);
                             contactsList.insert(contact, 0);
+                            if (contact == chatting)
+                            {
+                                $(".msg").get($(".msg").length-1).scrollIntoView(false);
+                            }
                         }
+
                     }
                 }
             }
