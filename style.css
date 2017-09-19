@@ -9,7 +9,8 @@
          url("fonts/material-design-icons-3.0.1/MaterialIcons-Regular.woff") format('woff'),
          url("fonts/material-design-icons-3.0.1/MaterialIcons-Regular.ttf") format('truetype');
 }
-@media (min-aspect-ratio: 1/1){
+/* For desktop */
+@media (min-width: 800px){
 	*:focus {
     outline: none;
 }
@@ -577,7 +578,8 @@ input{
 }
 
 
-@media (max-aspect-ratio:1/1){
+/* For phone */
+@media (max-width : 800px ){
 	*:focus {
     outline: none;
 }
