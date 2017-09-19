@@ -66,11 +66,17 @@
                         </template>
                     </div>
                 </div>
+                <div id="side-bg" onclick="$('#side').removeClass('slideIn');$('#side').addClass('slideOut');">
+
+                </div>
             </div>
             <div id="center">
                 <div id="top" onselectstart="return false;">
-                    <i id="buttonMenu" class="icon" onclick="$('#side').removeClass('slideOut');$('#side').addClass('slideIn');">menu</i>
-                    <div id="title">Title</div>
+                    <div id="menu-button-top">
+                      <div id="buttonMenu" class="icon" onclick="$('#side').removeClass('slideOut'); $('#side').addClass('slideIn');">menu</div>
+                      <div id="icon-notice">&nbsp;</div>
+                    </div>
+                    <div id="title">&nbsp;</div>
                 </div>
                 <div id="chat">
                     <template id="chatTemplate">
@@ -91,7 +97,7 @@
                             <i id="buttonImg" class="icon" onselectstart="return false;">image</i>
                             <i id="buttonImg" class="icon" onselectstart="return false;">add</i>
                         </div>
-                        <i id="buttonSend" class=icon onselectstart="return false">send</i>
+                        <i id="buttonSend" class="icon" onselectstart="return false">send</i>
                     </div>
                 </div>
                 <div id="logoBackground">
@@ -111,11 +117,6 @@
                 var tmcsClient = new TMCS("tmcs.mdzz.studio:5732", false);
                 var contactsList = new ObserveList();
                 window.onload = initTMCS;
-                $("#buttonMenu").click(function (e)
-                {
-
-                });
-
                 $("#buttonLogin").click(login);
                 $("#login-input #uid").get(0).onblur = function (e)
                 {
@@ -171,7 +172,13 @@
                     $("#chat").css("display", "block");
                     $("#top").css("display", "block");
                     $("#footer").css("display", "block");
-
+                    $("#menu-button-top #icon-notice").css("display","none");
+                    for (var i = 0; i < contactsList.length; i++) {
+                        if (contactsList[i].msgStatus == "onMsg") {
+                            $("#menu-button-top #icon-notice").css("display", "block");
+                            break;
+                        }
+                    }
                 }
                 function sendMsg()
                 {
@@ -394,6 +401,9 @@ Cylj7GwF/uieA6xJbb4lZHMz0SHjxQkk1tt9ikT+fg==<br>\
                             });
                             if (contact.chatting == "chatting")
                                 contact.msgStatus = "noMsg";
+                            else {
+                                $("#menu-button-top #icon-notice").css("display", "block");
+                            }
                             contactsList.removeAt(i);
                             contactsList.insert(contact, 0);
                         }
