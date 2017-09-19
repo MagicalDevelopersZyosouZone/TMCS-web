@@ -108,7 +108,7 @@
             try
             {
                 HTMLTemplate.Init();
-                var tmcsClient = new TMCS("tmcs.dwscdv3.com:443", true);
+                var tmcsClient = new TMCS("tmcs.mdzz.studio:5732", false);
                 var contactsList = new ObserveList();
                 window.onload = initTMCS;
                 $("#buttonMenu").click(function (e)
@@ -244,7 +244,7 @@ Cylj7GwF/uieA6xJbb4lZHMz0SHjxQkk1tt9ikT+fg==<br>\
 
                 function initTMCS()
                 {
-                    tmcsClient = new TMCS("tmcs.dwscdv3.com:443", true);
+                    tmcsClient = new TMCS("tmcs.mdzz.studio", false);
                     tmcsClient.handshake(function (result)
                     {
                         if(result.code==0)
